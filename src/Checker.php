@@ -38,20 +38,20 @@ class Checker
 
     /**
      * Checks the of the name
-     * 
+     *
      * <code>
      * Array
      *   (
             [mynewdomainnamexyz] => Array
                 (
                     [com] => 1
-                    [it] => 
+                    [it] =>
                     [net] => 1
                 )
-        
+
         )
      * </code>
-     * 
+     *
      * @param $name
      * @return array
      */
