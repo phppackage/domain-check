@@ -33,41 +33,13 @@ class Checker
     {
         $this->tlds = $tlds;
     }
-
-    /**
-     *
-     */
-    private function filterServers(array $servers, array $tlds = [])
-    {
-        if (empty($tlds)) {
-            return $servers;
-        }
-        
-        $tlds = array_merge($this->tlds, $tlds);
-
-        return array_values(array_filter($servers, function ($value) use ($tlds) {
-            return in_array($value['tld'], $tlds);
-        }));
-    }
     
     /**
      *
      */
     public function whoisServers(array $tlds = [], string $servers_file = 'whois-servers.json')
     {
-        $path = __DIR__.'/'.$servers_file;
-        
-        if (!file_exists($path) || !is_readable($path)) {
-            throw new \RuntimeException('whois-servers.json does not exist or is not readable');
-        }
-
-        $json = json_decode(file_get_contents($path), true);
-        
-        if (empty($json) || !is_array($json)) {
-            throw new \RuntimeException('invalid whois-servers.json file');
-        }
-        
-        return $this->filterServers($json, $tlds);
+        return (new Whois($this->tlds))->servers($tlds, $servers_file);
     }
 
     /**
@@ -75,40 +47,27 @@ class Checker
      */
     public function availability($name)
     {
-        return true;
+        $whois = new Whois();
+        
+        $result[$name] = [];
+        foreach ($whois->servers($this->tlds) as $server) {
+            //query whois and check domain
+            if (
+                $whois->checkDomain(
+                    trim($name).".",
+                    $server['server'],
+                    $server['pattern']['available']
+                )
+            ) {
+                // domain is available
+                $result[$name][$server['tld']] = true;
+            } else {
+                // domain is registered
+                $result[$name][$server['tld']] = false;
+            }
+        }
+        
+        return $result;
     }
     
-    /**
-     * Socket connection to whois server.
-     *
-     * @param string $domain
-     * @param string $server
-     * @param string $findText
-     * @return bool
-     */
-    private function checkDomain($domain, $server, $pattern)
-    {
-        // open socket to whois server
-        $socket = @fsockopen($server, 43);
-        
-        if (!$socket) {
-            return false;
-        }
-        
-        // send the requested domain name
-        fputs($socket, $domain."\r\n");
-        
-        // read and store the server response
-        $response = ' :';
-        
-        while (!feof($socket)) {
-            $response .= fgets($socket, 256);
-        }
-
-        // close the connection
-        fclose($socket);
-        
-        // check the response stream whether the domain is available
-        return strpos($response, $pattern) ? true : false;
-    }
 }

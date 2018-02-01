@@ -106,31 +106,15 @@ class DomainCheckTest extends TestCase
     /**
      *
      */
-    public function testAvailability()
+    public function testAvailabilityNotFound()
     {
         //
-        $checker = new Checker();
-        
-        $this->assertTrue($checker->availability('foobar'));
-    }
-
-    /**
-     *
-     */
-    public function testCheckDomainTrue()
-    {
-        //
-        $checker = new Checker();
-        
-        // open private method
-        $class = new \ReflectionClass($checker);
-        $method = $class->getMethod('checkDomain');
-        $method->setAccessible(true);
+        $checker = new Checker(['com']);
         
         $fsockopen = $this->getFunctionMock(__NAMESPACE__, "fsockopen");
-        $fsockopen->expects($this->any())->willReturnCallback( // first time
+        $fsockopen->expects($this->any())->willReturnCallback(
             function ($server, $port) {
-                $this->assertEquals("whois.server.test", $server);
+                $this->assertEquals("whois.crsnic.net", $server);
                 $this->assertEquals(43, $port);
                 return true;
             }
@@ -139,19 +123,19 @@ class DomainCheckTest extends TestCase
         $fputs = $this->getFunctionMock(__NAMESPACE__, "fputs");
         $fputs->expects($this->once())->willReturnCallback(
             function ($socket, $data) {
-                $this->assertTrue($socket); // this comes from mock
-                $this->assertEquals("domain\r\n", $data);
+                $this->assertTrue($socket);
+                $this->assertEquals("testdomain.\r\n", $data);
                 return true;
             }
         );
         
         $feof = $this->getFunctionMock(__NAMESPACE__, "feof");
-        $feof->expects($this->at(0))->willReturnCallback( // first loop
+        $feof->expects($this->at(0))->willReturnCallback(
             function ($socket) {
                 return false;
             }
         );
-        $feof->expects($this->at(1))->willReturnCallback( // second loop
+        $feof->expects($this->at(1))->willReturnCallback(
             function ($socket) {
                 return true;
             }
@@ -172,26 +156,21 @@ class DomainCheckTest extends TestCase
             }
         );
         
-        $this->assertTrue($method->invoke($checker, 'domain', 'whois.server.test', 'not found'));
+        $this->assertEquals(['testdomain' => ['com' => false]], $checker->availability('testdomain'));
     }
     
     /**
      *
      */
-    public function testCheckDomainFalseDomainTaken()
+    public function testAvailabilityFound()
     {
         //
-        $checker = new Checker();
-        
-        // open private method
-        $class = new \ReflectionClass($checker);
-        $method = $class->getMethod('checkDomain');
-        $method->setAccessible(true);
+        $checker = new Checker(['com']);
         
         $fsockopen = $this->getFunctionMock(__NAMESPACE__, "fsockopen");
-        $fsockopen->expects($this->once())->willReturnCallback( // first time
+        $fsockopen->expects($this->any())->willReturnCallback(
             function ($server, $port) {
-                $this->assertEquals("whois.server.test", $server);
+                $this->assertEquals("whois.crsnic.net", $server);
                 $this->assertEquals(43, $port);
                 return true;
             }
@@ -200,19 +179,19 @@ class DomainCheckTest extends TestCase
         $fputs = $this->getFunctionMock(__NAMESPACE__, "fputs");
         $fputs->expects($this->once())->willReturnCallback(
             function ($socket, $data) {
-                $this->assertTrue($socket); // this comes from mock
-                $this->assertEquals("domain\r\n", $data);
+                $this->assertTrue($socket);
+                $this->assertEquals("testdomain.\r\n", $data);
                 return true;
             }
         );
         
         $feof = $this->getFunctionMock(__NAMESPACE__, "feof");
-        $feof->expects($this->at(0))->willReturnCallback( // first loop
+        $feof->expects($this->at(0))->willReturnCallback(
             function ($socket) {
                 return false;
             }
         );
-        $feof->expects($this->at(1))->willReturnCallback( // second loop
+        $feof->expects($this->at(1))->willReturnCallback(
             function ($socket) {
                 return true;
             }
@@ -222,7 +201,7 @@ class DomainCheckTest extends TestCase
         $fgets->expects($this->any())->willReturnCallback(
             function ($socket, $length) {
                 $this->assertEquals(256, $length);
-                return 'Large whois response';
+                return 'no match for';
             }
         );
         
@@ -233,31 +212,7 @@ class DomainCheckTest extends TestCase
             }
         );
         
-        $this->assertFalse($method->invoke($checker, 'domain', 'whois.server.test', 'not found'));
+        $this->assertEquals(['testdomain' => ['com' => true]], $checker->availability('testdomain'));
     }
 
-    /**
-     *
-     */
-    public function testCheckDomainFalseNoConnection()
-    {
-        //
-        $checker = new Checker();
-        
-        // open private method
-        $class = new \ReflectionClass($checker);
-        $method = $class->getMethod('checkDomain');
-        $method->setAccessible(true);
-        
-        $fsockopen = $this->getFunctionMock(__NAMESPACE__, "fsockopen");
-        $fsockopen->expects($this->any())->willReturnCallback(
-            function ($server, $port) {
-                $this->assertEquals("whois.server.test", $server);
-                $this->assertEquals(43, $port);
-                return false;
-            }
-        );
-
-        $this->assertFalse($method->invoke($checker, 'domain', 'whois.server.test', 'not found'));
-    }
 }
