@@ -33,7 +33,7 @@ class Checker
     {
         $this->tlds = $tlds;
     }
-
+    
     /**
      *
      */
@@ -48,9 +48,9 @@ class Checker
     public function availability($name)
     {
         $whois = new Whois();
-
+        
         $result = [
-            'name' => []
+            $name = []
         ];
         foreach ($whois->servers($this->tlds) as $server) {
             //query whois and check domain
@@ -68,7 +68,7 @@ class Checker
                 $result[$name][$server['tld']] = false;
             }
         }
-
+        
         return $result;
     }
 }
