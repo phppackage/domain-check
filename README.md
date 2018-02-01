@@ -1,7 +1,7 @@
 ## Domain Checker
 
 [![Build Status](https://travis-ci.org/phppackage/domain-check.svg?branch=master)](https://travis-ci.org/phppackage/domain-check)
-[![StyleCI](https://styleci.io/repos/REPO_ID_CHANGE_THIS/shield?branch=master)](https://styleci.io/repos/REPO_ID_CHANGE_THIS)
+[![StyleCI](https://styleci.io/repos/119786906/shield?branch=master)](https://styleci.io/repos/119786906)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/phppackage/domain-check/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phppackage/domain-check/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/phppackage/domain-check/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/phppackage/domain-check/code-structure/master/code-coverage)
 [![Packagist Version](https://img.shields.io/packagist/v/phppackage/domain-check.svg?style=flat-square)](https://github.com/phppackage/domain-check/releases)
