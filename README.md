@@ -25,14 +25,33 @@ $ composer require phppackage/domain-check
     
     use \PHPPackage\DomainCheck\Checker;
     
-    //
-    $checker = new Checker();
+    // domain name (without tlds)
+    $name = 'mynewdomainnamexyz';
+
+    // define tlds
+    $tlds = [
+        'com',
+        'net'
+    ];
+    
+    // init checker class
+    $checker = new Checker($tlds);
     
     /**
-     * Loolup all tlds for a given name, e.g domain.com, domain.co.uk ...
+     * Lookup all tlds for a given name, e.g domain.com, domain.net ...
      * @return array
      */
-    $checker->availability('domain');
+    $result = $checker->availability('domain');
+    
+    Array
+    (
+        [mynewdomainnamexyz] => Array
+            (
+                [com] => 1
+                [net] => 1
+            )
+    
+    )
     
     
 
