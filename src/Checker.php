@@ -49,9 +49,8 @@ class Checker
     {
         $whois = new Whois();
         
-        $result = [
-            $name => []
-        ];
+        $result = [];
+        $result[$name] = [];
         foreach ($whois->servers($this->tlds) as $server) {
             //query whois and check domain
             if (
