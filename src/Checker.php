@@ -69,5 +69,4 @@ class Checker
         
         return $result;
     }
-    
 }
