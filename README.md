@@ -23,7 +23,7 @@ $ composer require phppackage/domain-check
     <?php
     require 'vendor/autoload.php';
     
-    use \PHPPackage\domain-check\Checker;
+    use \PHPPackage\DomainCheck\Checker;
     
     //
     $checker = new Checker();
