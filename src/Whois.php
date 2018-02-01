@@ -51,25 +51,45 @@ class Whois
             return in_array($value['tld'], $tlds);
         }));
     }
-
+    
     /**
-     *
+     * 
      */
-    public function servers(array $tlds = [], string $servers_file = 'whois-servers.json'): array
+    private function loadServers(string $servers_file = 'whois-servers.json')
     {
         $path = __DIR__.'/'.$servers_file;
 
         if (!file_exists($path) || !is_readable($path)) {
             throw new \RuntimeException('whois-servers.json does not exist or is not readable');
         }
+        
+        return json_decode(file_get_contents($path), true);
+    }
 
-        $json = json_decode(file_get_contents($path), true);
+    /**
+     *
+     */
+    public function servers(array $tlds = [], bool $all = false, string $servers_file = 'whois-servers.json'): array
+    {
+        $json = $this->loadServers($servers_file);
 
         if (empty($json) || !is_array($json)) {
             throw new \RuntimeException('invalid whois-servers.json file');
         }
 
-        return $this->filterServers($json, $tlds);
+        if (!$all) {
+            return $this->filterServers($json, $tlds);
+        }
+        
+        return $json;
+    }
+    
+    /**
+     *
+     */
+    public function allServers(string $servers_file = 'whois-servers.json'): array
+    {
+        return $this->servers([], true, $servers_file);
     }
 
     /**
