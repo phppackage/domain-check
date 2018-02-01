@@ -117,6 +117,6 @@ class Whois
 
         fclose($socket);
 
-        return stripos($response, $pattern);
+        return (stripos($response, $pattern) !== false);
     }
 }
