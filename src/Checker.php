@@ -52,14 +52,11 @@ class Checker
         $result = [];
         $result[$name] = [];
         foreach ($whois->servers($this->tlds) as $server) {
-            //query whois and check domain
-            if (
-                $whois->checkDomain(
-                    trim($name).".",
-                    $server['server'],
-                    $server['pattern']['available']
-                )
-            ) {
+            if ($whois->checkDomain(
+                trim($name).'.',
+                $server['server'],
+                $server['pattern']['available']
+            )) {
                 // domain is available
                 $result[$name][$server['tld']] = true;
             } else {
