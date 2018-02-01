@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /*
  +-----------------------------------------------------------------------------+
  | PHPPackage - Domain Checker
@@ -33,27 +35,37 @@ class Checker
     {
         $this->tlds = $tlds;
     }
-    
-    /**
-     *
-     */
-    public function whoisServers(array $tlds = [], string $servers_file = 'whois-servers.json')
-    {
-        return (new Whois($this->tlds))->servers($tlds, $servers_file);
-    }
 
     /**
-     *
+     * Checks the of the name
+     * 
+     * <code>
+     * Array
+     *   (
+            [mynewdomainnamexyz] => Array
+                (
+                    [com] => 1
+                    [it] => 
+                    [net] => 1
+                )
+        
+        )
+     * </code>
+     * 
+     * @param $name
+     * @return array
      */
-    public function availability($name)
+    public function availability(string $name): array
     {
+        $name = strtolower(trim($name));
+        
         $whois = new Whois();
         
         $result = [];
         $result[$name] = [];
         foreach ($whois->servers($this->tlds) as $server) {
-            if ($whois->checkDomain(
-                trim($name).'.',
+            if ($whois->check(
+                $name.'.',
                 $server['server'],
                 $server['pattern']['available']
             )) {

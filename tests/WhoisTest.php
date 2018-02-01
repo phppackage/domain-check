@@ -18,18 +18,87 @@ class WhoisTest extends TestCase
             new Whois()
         );
     }
+    
+    /**
+     *
+     */
+    public function testServers()
+    {
+        $whois = new Whois();
+
+        $result = $whois->servers(['com']);
+
+        $this->assertEquals(1, count($result));
+    }
+    
+    /**
+     *
+     */
+    public function testServersAll()
+    {
+        $whois = new Whois();
+
+        $result = $whois->servers();
+
+        $this->assertEquals(true, (count($result) > 1000));
+    }
 
     /**
      *
      */
-    public function testCheckDomainTrue()
+    public function testServersNotExists()
+    {
+        $whois = new Whois();
+
+        try {
+            $whois->servers(['com'], '../tests/fixtures/not-exists-whois-servers.json');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('RuntimeException', $e);
+            $this->assertEquals('whois-servers.json does not exist or is not readable', $e->getMessage());
+        }
+    }
+    
+    /**
+     *
+     */
+    public function testServersEmpty()
+    {
+        $whois = new Whois();
+
+        try {
+            $whois->servers(['com'], '../tests/fixtures/empty-whois-servers.json');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('RuntimeException', $e);
+            $this->assertEquals('invalid whois-servers.json file', $e->getMessage());
+        }
+    }
+
+    /**
+     *
+     */
+    public function testServersInvalid()
+    {
+        $whois = new Whois();
+
+        try {
+            $whois->servers(['com'], '../tests/fixtures/invalid-whois-servers.json');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('RuntimeException', $e);
+            $this->assertEquals('invalid whois-servers.json file', $e->getMessage());
+        }
+    }
+
+    /**
+     *
+     */
+    public function testcheckTrue()
     {
         //
         $whois = new Whois();
         
         // open private method
         $class = new \ReflectionClass($whois);
-        $method = $class->getMethod('checkDomain');
+        $method = $class->getMethod('check');
         $method->setAccessible(true);
         
         $fsockopen = $this->getFunctionMock(__NAMESPACE__, "fsockopen");
@@ -65,7 +134,7 @@ class WhoisTest extends TestCase
         $fgets = $this->getFunctionMock(__NAMESPACE__, "fgets");
         $fgets->expects($this->any())->willReturnCallback(
             function ($socket, $length) {
-                $this->assertEquals(256, $length);
+                $this->assertEquals(512, $length);
                 return 'not found';
             }
         );
@@ -83,14 +152,14 @@ class WhoisTest extends TestCase
     /**
      *
      */
-    public function testCheckDomainFalseDomainTaken()
+    public function testcheckFalseDomainTaken()
     {
         //
         $whois = new Whois();
         
         // open private method
         $class = new \ReflectionClass($whois);
-        $method = $class->getMethod('checkDomain');
+        $method = $class->getMethod('check');
         $method->setAccessible(true);
         
         $fsockopen = $this->getFunctionMock(__NAMESPACE__, "fsockopen");
@@ -126,7 +195,7 @@ class WhoisTest extends TestCase
         $fgets = $this->getFunctionMock(__NAMESPACE__, "fgets");
         $fgets->expects($this->any())->willReturnCallback(
             function ($socket, $length) {
-                $this->assertEquals(256, $length);
+                $this->assertEquals(512, $length);
                 return 'Large whois response';
             }
         );
@@ -144,14 +213,14 @@ class WhoisTest extends TestCase
     /**
      *
      */
-    public function testCheckDomainFalseNoConnection()
+    public function testcheckFalseNoConnection()
     {
         //
         $whois = new Whois();
         
         // open private method
         $class = new \ReflectionClass($whois);
-        $method = $class->getMethod('checkDomain');
+        $method = $class->getMethod('check');
         $method->setAccessible(true);
         
         $fsockopen = $this->getFunctionMock(__NAMESPACE__, "fsockopen");

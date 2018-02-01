@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /*
  +-----------------------------------------------------------------------------+
  | PHPPackage - Domain Checker
@@ -37,7 +39,7 @@ class Whois
     /**
      *
      */
-    private function filterServers(array $servers, array $tlds = [])
+    private function filterServers(array $servers, array $tlds = []): array
     {
         $tlds = array_merge($this->tlds, $tlds);
 
@@ -53,7 +55,7 @@ class Whois
     /**
      *
      */
-    public function servers(array $tlds = [], string $servers_file = 'whois-servers.json')
+    public function servers(array $tlds = [], string $servers_file = 'whois-servers.json'): array
     {
         $path = __DIR__.'/'.$servers_file;
 
@@ -78,12 +80,12 @@ class Whois
      * @param string $findText
      * @return bool
      */
-    public function checkDomain($domain, $server, $pattern)
+    public function check($domain, $server, $pattern): bool
     {
         // open socket to whois server
         $socket = @fsockopen($server, 43);
 
-        if (!$socket) {
+        if ($socket === false) {
             return false;
         }
 
@@ -94,7 +96,7 @@ class Whois
         $response = ' :';
 
         while (!feof($socket)) {
-            $response .= fgets($socket, 256);
+            $response .= fgets($socket, 512);
         }
         
         // close the connection

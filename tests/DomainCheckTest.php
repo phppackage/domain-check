@@ -37,75 +37,6 @@ class DomainCheckTest extends TestCase
     /**
      *
      */
-    public function testWhoisServers()
-    {
-        $checker = new Checker();
-
-        $result = $checker->whoisServers(['com']);
-
-        $this->assertEquals(1, count($result));
-    }
-    
-    /**
-     *
-     */
-    public function testWhoisServersAll()
-    {
-        $checker = new Checker();
-
-        $result = $checker->whoisServers();
-
-        $this->assertEquals(true, (count($result) > 1000));
-    }
-
-    /**
-     *
-     */
-    public function testWhoisServersNotExists()
-    {
-        $checker = new Checker();
-
-        try {
-            $checker->whoisServers(['com'], '../tests/fixtures/not-exists-whois-servers.json');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('RuntimeException', $e);
-            $this->assertEquals('whois-servers.json does not exist or is not readable', $e->getMessage());
-        }
-    }
-    
-    /**
-     *
-     */
-    public function testWhoisServersEmpty()
-    {
-        $checker = new Checker();
-
-        try {
-            $checker->whoisServers(['com'], '../tests/fixtures/empty-whois-servers.json');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('RuntimeException', $e);
-            $this->assertEquals('invalid whois-servers.json file', $e->getMessage());
-        }
-    }
-
-    /**
-     *
-     */
-    public function testWhoisServersInvalid()
-    {
-        $checker = new Checker();
-
-        try {
-            $checker->whoisServers(['com'], '../tests/fixtures/invalid-whois-servers.json');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('RuntimeException', $e);
-            $this->assertEquals('invalid whois-servers.json file', $e->getMessage());
-        }
-    }
-    
-    /**
-     *
-     */
     public function testAvailabilityNotFound()
     {
         //
@@ -144,7 +75,7 @@ class DomainCheckTest extends TestCase
         $fgets = $this->getFunctionMock(__NAMESPACE__, "fgets");
         $fgets->expects($this->any())->willReturnCallback(
             function ($socket, $length) {
-                $this->assertEquals(256, $length);
+                $this->assertEquals(512, $length);
                 return 'not found';
             }
         );
@@ -200,7 +131,7 @@ class DomainCheckTest extends TestCase
         $fgets = $this->getFunctionMock(__NAMESPACE__, "fgets");
         $fgets->expects($this->any())->willReturnCallback(
             function ($socket, $length) {
-                $this->assertEquals(256, $length);
+                $this->assertEquals(512, $length);
                 return 'no match for';
             }
         );
