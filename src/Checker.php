@@ -35,7 +35,7 @@ class Checker
     }
 
     /**
-     * 
+     *
      */
     private function filterServers(array $servers, array $tlds = [])
     {
@@ -45,13 +45,13 @@ class Checker
         
         $tlds = array_merge($this->tlds, $tlds);
 
-        return array_values(array_filter($servers, function($value) use ($tlds) {
+        return array_values(array_filter($servers, function ($value) use ($tlds) {
             return in_array($value['tld'], $tlds);
         }));
     }
     
     /**
-     * 
+     *
      */
     public function whoisServers(array $tlds = [], string $servers_file = 'whois-servers.json')
     {
@@ -71,7 +71,7 @@ class Checker
     }
 
     /**
-     * 
+     *
      */
     public function availability($name)
     {
@@ -79,37 +79,36 @@ class Checker
     }
     
     /**
-	 * Socket connection to whois server.
-	 * 
-	 * @param string $domain
-	 * @param string $server
-	 * @param string $findText
-	 * @return bool
-	 */
-	private function checkDomain($domain, $server, $pattern)
-	{
-		// open socket to whois server
-		$socket = @fsockopen($server, 43);
-		
-		if (!$socket) {
-		    return false;
-		}
-		
-		// send the requested domain name
-		fputs($socket, $domain."\r\n");
-		
-		// read and store the server response
-		$response = ' :';
-		
-		while (!feof($socket)) {
-			$response .= fgets($socket, 256);
-		}
+     * Socket connection to whois server.
+     *
+     * @param string $domain
+     * @param string $server
+     * @param string $findText
+     * @return bool
+     */
+    private function checkDomain($domain, $server, $pattern)
+    {
+        // open socket to whois server
+        $socket = @fsockopen($server, 43);
+        
+        if (!$socket) {
+            return false;
+        }
+        
+        // send the requested domain name
+        fputs($socket, $domain."\r\n");
+        
+        // read and store the server response
+        $response = ' :';
+        
+        while (!feof($socket)) {
+            $response .= fgets($socket, 256);
+        }
 
-		// close the connection
-		fclose($socket);
-		
-		// check the response stream whether the domain is available
-		return strpos($response, $pattern) ? true : false;
-	}
-
+        // close the connection
+        fclose($socket);
+        
+        // check the response stream whether the domain is available
+        return strpos($response, $pattern) ? true : false;
+    }
 }
