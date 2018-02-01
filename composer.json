@@ -1,0 +1,42 @@
+{
+    "name": "phppackage/domain-check",
+    "type": "library",
+    "description": "Domain availability checker.",
+    "license": "MIT",
+    "keywords": [
+        "domain",
+        "whois",
+        "checker",
+        "availability"
+    ],
+    "homepage": "http://github.com/phppackage/domain-check",
+    "authors": [
+        {
+            "name": "Lawrence Cherone",
+            "email": "lawrence@cherone.co.uk",
+            "homepage": "http://github.com/phppackage",
+            "role": "Owner"
+        }
+    ],
+    "require": {
+        "php": "~5.6|~7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.4.4",
+        "php-mock/php-mock-phpunit": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPPackage\\DomainCheck\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPPackage\\DomainCheck\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --configuration phpunit.xml --coverage-text"
+    },
+    "minimum-stability": "stable"
+}
