@@ -50,7 +50,7 @@ class Checker
         $whois = new Whois();
         
         $result = [
-            $name = []
+            $name => []
         ];
         foreach ($whois->servers($this->tlds) as $server) {
             //query whois and check domain
