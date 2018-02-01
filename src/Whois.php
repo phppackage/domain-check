@@ -102,27 +102,21 @@ class Whois
      */
     public function check($domain, $server, $pattern): bool
     {
-        // open socket to whois server
-        $socket = @fsockopen($server, 43);
+        $socket = fsockopen($server, 43);
 
         if ($socket === false) {
             return false;
         }
 
-        // send the requested domain name
         fputs($socket, $domain."\r\n");
 
-        // read and store the server response
-        $response = ' :';
-
+        $response = null;
         while (!feof($socket)) {
             $response .= fgets($socket, 512);
         }
-        
-        // close the connection
+
         fclose($socket);
 
-        // check the response stream whether the domain is available
-        return stripos($response, $pattern) ? true : false;
+        return stripos($response, $pattern);
     }
 }
