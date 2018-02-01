@@ -53,7 +53,7 @@ class Whois
     }
     
     /**
-     * 
+     *
      */
     private function loadServers(string $servers_file = 'whois-servers.json')
     {
