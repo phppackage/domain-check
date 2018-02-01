@@ -214,5 +214,4 @@ class DomainCheckTest extends TestCase
         
         $this->assertEquals(['testdomain' => ['com' => true]], $checker->availability('testdomain'));
     }
-
 }
